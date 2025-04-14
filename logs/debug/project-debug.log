@@ -1,0 +1,10 @@
+{"level":"INFO","time":"2025-04-14T18:13:12.523+0800","caller":"user/user.go:39","msg":"短信平台调用成功，发送短信"}
+{"level":"INFO","time":"2025-04-14T18:13:12.524+0800","caller":"user/user.go:41","msg":"将手机号和验证码存入redis成功: REGISTER_15575564709 : 123456"}
+{"level":"INFO","time":"2025-04-14T18:13:56.744+0800","caller":"user/user.go:39","msg":"短信平台调用成功，发送短信"}
+{"level":"INFO","time":"2025-04-14T18:13:56.744+0800","caller":"user/user.go:41","msg":"将手机号和验证码存入redis成功: REGISTER_15575564709 : 123456"}
+{"level":"INFO","time":"2025-04-14T18:14:06.773+0800","caller":"user/user.go:39","msg":"短信平台调用成功，发送短信"}
+{"level":"INFO","time":"2025-04-14T18:14:06.773+0800","caller":"user/user.go:41","msg":"将手机号和验证码存入redis成功: REGISTER_15575564709 : 123456"}
+{"level":"INFO","time":"2025-04-14T18:18:11.277+0800","caller":"user/user.go:39","msg":"短信平台调用成功，发送短信"}
+{"level":"INFO","time":"2025-04-14T18:18:11.278+0800","caller":"user/user.go:41","msg":"将手机号和验证码存入redis成功: REGISTER_15575564709 : 123456"}
+{"level":"INFO","time":"2025-04-14T18:25:08.477+0800","caller":"user/user.go:39","msg":"短信平台调用成功，发送短信"}
+{"level":"INFO","time":"2025-04-14T18:25:08.477+0800","caller":"user/user.go:41","msg":"将手机号和验证码存入redis成功: REGISTER_15575564709 : 123456"}

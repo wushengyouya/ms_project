@@ -32,7 +32,7 @@ func Run(r *gin.Engine, serverName string, addr string) {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	log.Printf("shutdown %s web server... \n", serverName)
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Microsecond)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Printf("%s web server shutdown,cause by: %v\n", serverName, err)
