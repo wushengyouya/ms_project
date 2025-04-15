@@ -2,3 +2,8 @@
 {"level":"WARN","time":"2025-04-15T16:39:11.007+0800","caller":"login.service.v1/login_service.go:37","msg":"短信平台调用成功，发送短信warn"}
 {"level":"ERROR","time":"2025-04-15T16:39:11.008+0800","caller":"login.service.v1/login_service.go:38","msg":"短信平台调用成功，发送短信error"}
 {"level":"INFO","time":"2025-04-15T16:39:11.008+0800","caller":"login.service.v1/login_service.go:40","msg":"将手机号和验证码存入redis成功: REGISTER_15575572364 : 123456"}
+{"level":"INFO","time":"2025-04-15T17:38:24.040+0800","caller":"login.service.v1/login_service.go:33","msg":"验证码存入redis发生错误,cause by : ","error":"dial tcp 127.0.0.1:6379: connectex: No connection could be made because the target machine actively refused it."}
+{"level":"INFO","time":"2025-04-15T17:38:24.042+0800","caller":"login.service.v1/login_service.go:35","msg":"短信平台调用成功，发送短信"}
+{"level":"WARN","time":"2025-04-15T17:38:24.043+0800","caller":"login.service.v1/login_service.go:37","msg":"短信平台调用成功，发送短信warn"}
+{"level":"ERROR","time":"2025-04-15T17:38:24.043+0800","caller":"login.service.v1/login_service.go:38","msg":"短信平台调用成功，发送短信error"}
+{"level":"INFO","time":"2025-04-15T17:38:24.043+0800","caller":"login.service.v1/login_service.go:40","msg":"将手机号和验证码存入redis成功: REGISTER_15555553569 : 123456"}
