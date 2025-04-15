@@ -4,7 +4,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/redis/go-redis/v9"
 	"github.com/spf13/viper"
 	"github.com/wushengyouya/project-common/logs"
 	"go.uber.org/zap"
@@ -13,28 +12,13 @@ import (
 var AppConf = InitConfig()
 
 type Config struct {
-	viper      *viper.Viper
-	GrpcConfig *GrpcConfig
-	AppConfig  *AppConfig
+	viper     *viper.Viper
+	AppConfig *AppConfig
 }
 
 type AppConfig struct {
 	Addr string
 	Name string
-}
-
-type GrpcConfig struct {
-	Addr string
-	Name string
-}
-
-func (c *Config) ReadGrpcConfig() {
-	grpc := new(GrpcConfig)
-	err := c.viper.UnmarshalKey("grpc", grpc)
-	if err != nil {
-		zap.L().Error("grpc config read err: ", zap.Error(err))
-	}
-	c.GrpcConfig = grpc
 }
 
 func (c *Config) ReadAppConfig() {
@@ -57,7 +41,6 @@ func InitConfig() *Config {
 	log.Println(workDir + "\\config")
 	err := conf.viper.ReadInConfig()
 	conf.ReadAppConfig()
-	conf.ReadGrpcConfig()
 	if err != nil {
 		log.Fatalln("InitConfig: ", err)
 		return nil
@@ -77,13 +60,4 @@ func (c *Config) InitZapLog() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-}
-
-func (c *Config) InitRedisOptions() *redis.Options {
-	redisOptions := &redis.Options{
-		Addr:     c.viper.GetString("redis.host") + ":" + c.viper.GetString("redis.port"),
-		Password: c.viper.GetString("redis.password"),
-		DB:       c.viper.GetInt("redis.db"),
-	}
-	return redisOptions
 }

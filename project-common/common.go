@@ -13,13 +13,13 @@ import (
 )
 
 // 其他模块用到启停抽象出公共启停
-func Run(r *gin.Engine, serverName string, addr string) {
+func Run(r *gin.Engine, serverName string, addr string, stop func()) {
 	srv := http.Server{
 		Addr:    addr,
 		Handler: r,
 	}
 
-	// 便于优雅的后续启动
+	// 便于后续优雅的启动
 	go func() {
 		log.Printf(" %s running in %s \n", serverName, srv.Addr)
 		if err := srv.ListenAndServe(); err != nil {
@@ -36,6 +36,10 @@ func Run(r *gin.Engine, serverName string, addr string) {
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Printf("%s web server shutdown,cause by: %v\n", serverName, err)
+	}
+	if stop != nil {
+		stop()
+		log.Printf("grpc service stop")
 	}
 	select {
 	case <-ctx.Done():

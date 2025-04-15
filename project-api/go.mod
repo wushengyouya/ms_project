@@ -1,4 +1,4 @@
-module github.com/wushengyouya/project-user
+module github.com/wushengyouya/project-api
 
 go 1.23.0
 

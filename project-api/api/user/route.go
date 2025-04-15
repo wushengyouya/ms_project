@@ -1,0 +1,12 @@
+package user
+
+import "github.com/gin-gonic/gin"
+
+type RouterLogin struct {
+}
+
+func (rl *RouterLogin) Register(r *gin.Engine) {
+	InitUserRpc()
+	h := New()
+	r.POST("/project/login/getCaptcha", h.GetCaptcha)
+}

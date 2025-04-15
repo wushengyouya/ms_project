@@ -1,0 +1,10 @@
+zap:
+  debugFileName: ..\\logs\\debug\\project-debug.log
+  infoFileName: ..\\logs\\info\\project-info.log
+  warnFileName: ..\\logs\\error\\project-warn.log
+  maxSize: 500
+  maxAge: 28
+  maxBackups: 3
+app:
+  addr: 127.0.0.1:80
+  name: project-api

@@ -10,7 +10,13 @@ import (
 func main() {
 	r := gin.Default()
 	config.AppConf.InitZapLog()
+	// 注册路由
 	router.InitRouter(r)
-	srv.Run(r, "my-project", ":8080")
+	// 注册grpc服务
+	grpc := router.RegisterGrpc()
+	stop := func() {
+		grpc.Stop()
+	}
+	srv.Run(r, "my-project", ":8081", stop)
 
 }
