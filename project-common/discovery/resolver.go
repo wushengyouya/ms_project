@@ -16,18 +16,22 @@ const (
 
 // Resolver for grpc client
 type Resolver struct {
-	schema      string
-	EtcdAddrs   []string
+	// 基础配置
+	schema      string   // 协议方案（固定位etcd）
+	EtcdAddrs   []string // etcd集群地址
 	DialTimeout int
+	// 运行时组件
+	closeCh chan struct{}      // 关系信号通道
+	watchCh clientv3.WatchChan // etc监听通道
+	cli     *clientv3.Client   // etcd客户端实例
 
-	closeCh      chan struct{}
-	watchCh      clientv3.WatchChan
-	cli          *clientv3.Client
-	keyPrifix    string
-	srvAddrsList []resolver.Address
+	// 服务发现相关
+	keyPrifix    string             // etcd中服务注册的键前缀
+	srvAddrsList []resolver.Address // 当前可用服务地址列表
 
-	cc     resolver.ClientConn
-	logger *zap.Logger
+	// 依赖组件
+	cc     resolver.ClientConn // grpc客户端连接对象
+	logger *zap.Logger         // 日志记录器
 }
 
 // NewResolver create a new resolver.Builder base on etcd
@@ -49,7 +53,7 @@ func (r *Resolver) Scheme() string {
 func (r *Resolver) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error) {
 	r.cc = cc
 
-	r.keyPrifix = BuildPrefix(Server{Name: target.Endpoint, Version: target.Authority})
+	r.keyPrifix = BuildPrefix(Server{Name: target.Endpoint(), Version: target.URL.Host})
 	if _, err := r.start(); err != nil {
 		return nil, err
 	}

@@ -15,17 +15,17 @@ import (
 
 // Register for grpc server
 type Register struct {
-	EtcdAddrs   []string
-	DialTimeout int
+	EtcdAddrs   []string // etcd集群地址
+	DialTimeout int      // 连接超时
 
-	closeCh     chan struct{}
-	leasesID    clientv3.LeaseID
-	keepAliveCh <-chan *clientv3.LeaseKeepAliveResponse
+	closeCh     chan struct{}                           // 关闭通道
+	leasesID    clientv3.LeaseID                        // etcd租约ID
+	keepAliveCh <-chan *clientv3.LeaseKeepAliveResponse // 租约续期通道
 
-	srvInfo Server
-	srvTTL  int64
-	cli     *clientv3.Client
-	logger  *zap.Logger
+	srvInfo Server           // 服务元数据
+	srvTTL  int64            // 服务TTL
+	cli     *clientv3.Client // etcd客户端
+	logger  *zap.Logger      // 日志
 }
 
 // NewRegister create a register base on etcd
@@ -40,11 +40,12 @@ func NewRegister(etcdAddrs []string, logger *zap.Logger) *Register {
 // Register a service
 func (r *Register) Register(srvInfo Server, ttl int64) (chan<- struct{}, error) {
 	var err error
-
+	// 校验ip
 	if strings.Split(srvInfo.Addr, ":")[0] == "" {
 		return nil, errors.New("invalid ip")
 	}
 
+	// 创建 etcd客服端
 	if r.cli, err = clientv3.New(clientv3.Config{
 		Endpoints:   r.EtcdAddrs,
 		DialTimeout: time.Duration(r.DialTimeout) * time.Second,
@@ -89,6 +90,7 @@ func (r *Register) register() error {
 	if err != nil {
 		return err
 	}
+	// 将服务器ip数据put进入etcd
 	_, err = r.cli.Put(context.Background(), BuildRegPath(r.srvInfo), string(data), clientv3.WithLease(r.leasesID))
 	return err
 }

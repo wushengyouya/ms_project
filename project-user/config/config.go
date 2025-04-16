@@ -16,6 +16,7 @@ type Config struct {
 	viper      *viper.Viper
 	GrpcConfig *GrpcConfig
 	AppConfig  *AppConfig
+	EtcdConfig *EtcdConfig
 }
 
 type AppConfig struct {
@@ -24,8 +25,14 @@ type AppConfig struct {
 }
 
 type GrpcConfig struct {
-	Addr string
-	Name string
+	Addr    string
+	Name    string
+	Version string
+	Weight  int64
+}
+
+type EtcdConfig struct {
+	Addrs []string `mapstructure:"addrs"`
 }
 
 func (c *Config) ReadGrpcConfig() {
@@ -34,6 +41,7 @@ func (c *Config) ReadGrpcConfig() {
 	if err != nil {
 		zap.L().Error("grpc config read err: ", zap.Error(err))
 	}
+	log.Println("grpcconfig: ", grpc)
 	c.GrpcConfig = grpc
 }
 
@@ -43,21 +51,37 @@ func (c *Config) ReadAppConfig() {
 	if err != nil {
 		zap.L().Error("app config read err: ", zap.Error(err))
 	}
+	log.Println("appconfig: ", app)
 	c.AppConfig = app
+}
+
+func (c *Config) ReadEtcdConfg() {
+	etcdConfig := new(EtcdConfig)
+	err := c.viper.UnmarshalKey("etcd", etcdConfig)
+	if err != nil {
+		zap.L().Error("etcd config read err: ", zap.Error(err))
+	}
+	log.Println("etcd config : ", len(etcdConfig.Addrs), etcdConfig)
+	c.EtcdConfig = etcdConfig
 }
 
 // InitConfig 初始化config
 func InitConfig() *Config {
+	// 配置viper
 	viper := viper.New()
 	conf := &Config{viper: viper}
 	workDir, _ := os.Getwd()
-	conf.viper.SetConfigName("app")
+	conf.viper.SetConfigName("config")
 	conf.viper.SetConfigType("yaml")
-	conf.viper.AddConfigPath(workDir + "\\config")
-	log.Println(workDir + "\\config")
+	conf.viper.AddConfigPath(workDir + "/config")
+	log.Println(workDir + "/config")
+
+	// 读取配置文件
 	err := conf.viper.ReadInConfig()
 	conf.ReadAppConfig()
 	conf.ReadGrpcConfig()
+	conf.ReadEtcdConfg()
+
 	if err != nil {
 		log.Fatalln("InitConfig: ", err)
 		return nil
@@ -72,7 +96,7 @@ func (c *Config) InitZapLog() {
 	if err != nil {
 		log.Fatalln("InitZapLog: ", err)
 	}
-
+	log.Println("zapconfig: ", lc)
 	err = logs.InitLogger(lc)
 	if err != nil {
 		log.Fatalln(err)

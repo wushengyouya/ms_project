@@ -1,9 +1,15 @@
-{"level":"INFO","time":"2025-04-15T16:39:11.006+0800","caller":"login.service.v1/login_service.go:35","msg":"短信平台调用成功，发送短信"}
-{"level":"WARN","time":"2025-04-15T16:39:11.007+0800","caller":"login.service.v1/login_service.go:37","msg":"短信平台调用成功，发送短信warn"}
-{"level":"ERROR","time":"2025-04-15T16:39:11.008+0800","caller":"login.service.v1/login_service.go:38","msg":"短信平台调用成功，发送短信error"}
-{"level":"INFO","time":"2025-04-15T16:39:11.008+0800","caller":"login.service.v1/login_service.go:40","msg":"将手机号和验证码存入redis成功: REGISTER_15575572364 : 123456"}
-{"level":"INFO","time":"2025-04-15T17:38:24.040+0800","caller":"login.service.v1/login_service.go:33","msg":"验证码存入redis发生错误,cause by : ","error":"dial tcp 127.0.0.1:6379: connectex: No connection could be made because the target machine actively refused it."}
-{"level":"INFO","time":"2025-04-15T17:38:24.042+0800","caller":"login.service.v1/login_service.go:35","msg":"短信平台调用成功，发送短信"}
-{"level":"WARN","time":"2025-04-15T17:38:24.043+0800","caller":"login.service.v1/login_service.go:37","msg":"短信平台调用成功，发送短信warn"}
-{"level":"ERROR","time":"2025-04-15T17:38:24.043+0800","caller":"login.service.v1/login_service.go:38","msg":"短信平台调用成功，发送短信error"}
-{"level":"INFO","time":"2025-04-15T17:38:24.043+0800","caller":"login.service.v1/login_service.go:40","msg":"将手机号和验证码存入redis成功: REGISTER_15555553569 : 123456"}
+{"level":"ERROR","time":"2025-04-16T16:25:04.774+0800","caller":"user/user.go:29","msg":"failed to exit idle mode: etcdclient: no available endpoints"}
+{"level":"ERROR","time":"2025-04-16T16:26:33.631+0800","caller":"user/user.go:29","msg":"failed to exit idle mode: etcdclient: no available endpoints"}
+{"level":"ERROR","time":"2025-04-16T16:30:30.014+0800","caller":"user/user.go:29","msg":"failed to exit idle mode: etcdclient: no available endpoints"}
+{"level":"ERROR","time":"2025-04-16T16:30:44.931+0800","caller":"user/user.go:29","msg":"failed to exit idle mode: etcdclient: no available endpoints"}
+{"level":"ERROR","time":"2025-04-16T16:37:06.542+0800","caller":"user/user.go:29","msg":"failed to exit idle mode: etcdclient: no available endpoints"}
+{"level":"ERROR","time":"2025-04-16T16:58:20.180+0800","caller":"user/user.go:29","msg":"failed to exit idle mode: etcdclient: no available endpoints"}
+{"level":"ERROR","time":"2025-04-16T16:59:00.512+0800","caller":"user/user.go:29","msg":"failed to exit idle mode: etcdclient: no available endpoints"}
+{"level":"ERROR","time":"2025-04-16T17:08:31.212+0800","caller":"user/user.go:29","msg":"failed to exit idle mode: etcdclient: no available endpoints"}
+{"level":"ERROR","time":"2025-04-16T17:09:43.899+0800","caller":"user/user.go:29","msg":"rpc error: code = Unavailable desc = name resolver error: produced zero addresses"}
+{"level":"ERROR","time":"2025-04-16T17:13:58.726+0800","caller":"user/user.go:29","msg":"rpc error: code = Unavailable desc = name resolver error: produced zero addresses"}
+{"level":"ERROR","time":"2025-04-16T17:15:19.834+0800","caller":"user/user.go:29","msg":"rpc error: code = Code(2001) desc = 手机号不合法"}
+{"level":"INFO","time":"2025-04-16T17:15:35.432+0800","caller":"login.service.v1/login_service.go:35","msg":"短信平台调用成功，发送短信"}
+{"level":"WARN","time":"2025-04-16T17:15:35.432+0800","caller":"login.service.v1/login_service.go:37","msg":"短信平台调用成功，发送短信warn"}
+{"level":"ERROR","time":"2025-04-16T17:15:35.432+0800","caller":"login.service.v1/login_service.go:38","msg":"短信平台调用成功，发送短信error"}
+{"level":"INFO","time":"2025-04-16T17:15:35.433+0800","caller":"login.service.v1/login_service.go:40","msg":"将手机号和验证码存入redis成功: REGISTER_15569871563 : 123456"}

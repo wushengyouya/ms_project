@@ -15,7 +15,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-var lg *zap.Logger
+var LG *zap.Logger
 
 type LogConfig struct {
 	DebugFileName string `json:"debugFileName"`
@@ -45,9 +45,9 @@ func InitLogger(cfg *LogConfig) (err error) {
 	consoleEncoder := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
 	std := zapcore.NewCore(consoleEncoder, zapcore.Lock(os.Stdout), zapcore.DebugLevel)
 	core := zapcore.NewTee(debugCore, infoCore, warnCore, errorCore, std)
-	lg := zap.New(core, zap.AddCaller())
+	LG = zap.New(core, zap.AddCaller())
 
-	zap.ReplaceGlobals(lg) // 替换zap包中全局的logger实例，后续在其他包中只需要使用zap.L()调用即可
+	zap.ReplaceGlobals(LG) // 替换zap包中全局的logger实例，后续在其他包中只需要使用zap.L()调用即可
 	return
 }
 
@@ -80,7 +80,7 @@ func GinLogger() gin.HandlerFunc {
 		c.Next()
 
 		cost := time.Since(start)
-		lg.Info(path,
+		LG.Info(path,
 			zap.Int("status", c.Writer.Status()),
 			zap.String("method", c.Request.Method),
 			zap.String("path", path),
@@ -112,7 +112,7 @@ func GinRecovery(stack bool) gin.HandlerFunc {
 
 				httpRequest, _ := httputil.DumpRequest(c.Request, false)
 				if brokenPipe {
-					lg.Error(c.Request.URL.Path,
+					LG.Error(c.Request.URL.Path,
 						zap.Any("error", err),
 						zap.String("request", string(httpRequest)),
 					)
@@ -123,13 +123,13 @@ func GinRecovery(stack bool) gin.HandlerFunc {
 				}
 
 				if stack {
-					lg.Error("[Recovery from panic]",
+					LG.Error("[Recovery from panic]",
 						zap.Any("error", err),
 						zap.String("request", string(httpRequest)),
 						zap.String("stack", string(debug.Stack())),
 					)
 				} else {
-					lg.Error("[Recovery from panic]",
+					LG.Error("[Recovery from panic]",
 						zap.Any("error", err),
 						zap.String("request", string(httpRequest)),
 					)

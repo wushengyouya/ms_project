@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	common "github.com/wushengyouya/project-common"
 	"github.com/wushengyouya/project-common/errs"
+	"github.com/wushengyouya/project-common/logs"
 	loginServiceV1 "github.com/wushengyouya/project-user/pkg/service/login.service.v1"
 )
 
@@ -25,7 +26,9 @@ func (*LoginHanlder) GetCaptcha(ctx *gin.Context) {
 	resp, err := UserClient.GetCaptcha(c, &loginServiceV1.CaptchaMessage{Mobile: mobile})
 	if err != nil {
 		code, msg := errs.ParseGrpcError(err)
+		logs.LG.Error(err.Error())
 		ctx.JSON(http.StatusOK, result.Fail(code, msg))
+		return
 	}
 	ctx.JSON(http.StatusOK, result.Success(resp.Code))
 

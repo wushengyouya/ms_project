@@ -13,6 +13,6 @@ func main() {
 	// 注册路由
 	router.InitRouter(r)
 
-	srv.Run(r, "my-project", ":8080", nil)
+	srv.Run(r, config.AppConf.AppConfig.Name, config.AppConf.AppConfig.Addr, nil)
 
 }

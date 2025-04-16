@@ -14,9 +14,12 @@ func main() {
 	router.InitRouter(r)
 	// 注册grpc服务
 	grpc := router.RegisterGrpc()
+
+	// 注册etcd
+	router.RegisterEtcdServer()
 	stop := func() {
 		grpc.Stop()
 	}
-	srv.Run(r, "my-project", ":8081", stop)
+	srv.Run(r, config.AppConf.AppConfig.Name, config.AppConf.AppConfig.Addr, stop)
 
 }

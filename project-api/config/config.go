@@ -12,13 +12,18 @@ import (
 var AppConf = InitConfig()
 
 type Config struct {
-	viper     *viper.Viper
-	AppConfig *AppConfig
+	viper      *viper.Viper
+	AppConfig  *AppConfig
+	EtcdConfig *EtcdConfig
 }
 
 type AppConfig struct {
 	Addr string
 	Name string
+}
+
+type EtcdConfig struct {
+	Addrs []string
 }
 
 func (c *Config) ReadAppConfig() {
@@ -40,6 +45,7 @@ func InitConfig() *Config {
 	conf.viper.AddConfigPath(workDir + "\\config")
 	log.Println(workDir + "\\config")
 	err := conf.viper.ReadInConfig()
+	conf.ReadEtcdConfg()
 	conf.ReadAppConfig()
 	if err != nil {
 		log.Fatalln("InitConfig: ", err)
@@ -48,6 +54,15 @@ func InitConfig() *Config {
 	return conf
 }
 
+func (c *Config) ReadEtcdConfg() {
+	etcdConfig := new(EtcdConfig)
+	err := c.viper.UnmarshalKey("etcd", etcdConfig)
+	if err != nil {
+		zap.L().Error("etcd config read err: ", zap.Error(err))
+	}
+	log.Println("etcd config : ", etcdConfig)
+	c.EtcdConfig = etcdConfig
+}
 func (c *Config) InitZapLog() {
 	//从配置中读取日志配置，初始化日志
 	lc := &logs.LogConfig{}

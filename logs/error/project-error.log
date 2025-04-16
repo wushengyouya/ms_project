@@ -1,2 +1,3 @@
-{"level":"ERROR","time":"2025-04-15T16:39:11.008+0800","caller":"login.service.v1/login_service.go:38","msg":"短信平台调用成功，发送短信error"}
-{"level":"ERROR","time":"2025-04-15T17:38:24.043+0800","caller":"login.service.v1/login_service.go:38","msg":"短信平台调用成功，发送短信error"}
+{"level":"ERROR","time":"2025-04-16T17:13:58.726+0800","caller":"user/user.go:29","msg":"rpc error: code = Unavailable desc = name resolver error: produced zero addresses"}
+{"level":"ERROR","time":"2025-04-16T17:15:19.834+0800","caller":"user/user.go:29","msg":"rpc error: code = Code(2001) desc = 手机号不合法"}
+{"level":"ERROR","time":"2025-04-16T17:15:35.432+0800","caller":"login.service.v1/login_service.go:38","msg":"短信平台调用成功，发送短信error"}
