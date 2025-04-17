@@ -20,4 +20,10 @@ grpc:
   weight: 2
 etcd:
   addrs:
-    - "etcd3:2379"
+    - "etcd3:2379" # docker 用一个网络下可以使用容器名访问
+mysql:
+  username: root
+  password: root
+  host: 127.0.0.1
+  port: 3309
+  db: msproject

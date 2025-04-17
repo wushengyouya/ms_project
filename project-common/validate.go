@@ -11,3 +11,10 @@ func VerifyMobile(mobile string) bool {
 	reg := regexp.MustCompile(regular)
 	return reg.MatchString(mobile)
 }
+
+// VerfiyEmailFormat 校验邮箱
+func VerfiyEmailFormat(email string) bool {
+	pattern := `^[0-9a-z][_.0-9a-z-]{0,31}@([0-9a-z][0-9a-z-]{0,30}[0-9a-z].){1,4}[a-z]{2,4}$`
+	reg := regexp.MustCompile(pattern)
+	return reg.MatchString(email)
+}

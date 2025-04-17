@@ -8,7 +8,6 @@ import (
 	"github.com/wushengyouya/project-common/discovery"
 	"github.com/wushengyouya/project-common/logs"
 	"github.com/wushengyouya/project-user/config"
-	"github.com/wushengyouya/project-user/pkg/dao"
 	loginServiceV1 "github.com/wushengyouya/project-user/pkg/service/login.service.v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/resolver"
@@ -45,7 +44,7 @@ func RegisterGrpc() *grpc.Server {
 	c := gRPCConfig{
 		Addr: config.AppConf.GrpcConfig.Addr,
 		RegisterFunc: func(g *grpc.Server) {
-			loginServiceV1.RegisterLoginServiceServer(g, &loginServiceV1.LoginService{Cache: dao.RC})
+			loginServiceV1.RegisterLoginServiceServer(g, loginServiceV1.New())
 		},
 	}
 	s := grpc.NewServer()

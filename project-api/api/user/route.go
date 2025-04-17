@@ -9,4 +9,5 @@ func (rl *RouterLogin) Register(r *gin.Engine) {
 	InitUserRpc()
 	h := New()
 	r.POST("/project/login/getCaptcha", h.GetCaptcha)
+	r.POST("/project/login/register", h.Register)
 }

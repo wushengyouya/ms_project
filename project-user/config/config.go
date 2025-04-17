@@ -7,16 +7,16 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/spf13/viper"
 	"github.com/wushengyouya/project-common/logs"
-	"go.uber.org/zap"
 )
 
 var AppConf = InitConfig()
 
 type Config struct {
-	viper      *viper.Viper
-	GrpcConfig *GrpcConfig
-	AppConfig  *AppConfig
-	EtcdConfig *EtcdConfig
+	viper       *viper.Viper
+	GrpcConfig  *GrpcConfig
+	AppConfig   *AppConfig
+	EtcdConfig  *EtcdConfig
+	MysqlConfig *MysqlConfig
 }
 
 type AppConfig struct {
@@ -31,6 +31,14 @@ type GrpcConfig struct {
 	Weight  int64
 }
 
+type MysqlConfig struct {
+	UserName string
+	Password string
+	Host     string
+	Port     string
+	Db       string
+}
+
 type EtcdConfig struct {
 	Addrs []string `mapstructure:"addrs"`
 }
@@ -39,7 +47,7 @@ func (c *Config) ReadGrpcConfig() {
 	grpc := new(GrpcConfig)
 	err := c.viper.UnmarshalKey("grpc", grpc)
 	if err != nil {
-		zap.L().Error("grpc config read err: ", zap.Error(err))
+		log.Fatalln("grpc config read err: ", err)
 	}
 	log.Println("grpcconfig: ", grpc)
 	c.GrpcConfig = grpc
@@ -49,7 +57,7 @@ func (c *Config) ReadAppConfig() {
 	app := new(AppConfig)
 	err := c.viper.UnmarshalKey("app", app)
 	if err != nil {
-		zap.L().Error("app config read err: ", zap.Error(err))
+		log.Fatalln("app config read err: ", err)
 	}
 	log.Println("appconfig: ", app)
 	c.AppConfig = app
@@ -59,10 +67,20 @@ func (c *Config) ReadEtcdConfg() {
 	etcdConfig := new(EtcdConfig)
 	err := c.viper.UnmarshalKey("etcd", etcdConfig)
 	if err != nil {
-		zap.L().Error("etcd config read err: ", zap.Error(err))
+		log.Fatalln("etcd config read err: ", err)
 	}
 	log.Println("etcd config : ", len(etcdConfig.Addrs), etcdConfig)
 	c.EtcdConfig = etcdConfig
+}
+
+func (c *Config) ReadMysqlConfig() {
+	mysqlConfig := new(MysqlConfig)
+	err := c.viper.UnmarshalKey("mysql", mysqlConfig)
+	if err != nil {
+		log.Fatalln("mysql config read err: ", err)
+	}
+	log.Println("mysql config: ", mysqlConfig)
+	c.MysqlConfig = mysqlConfig
 }
 
 // InitConfig 初始化config
@@ -81,6 +99,7 @@ func InitConfig() *Config {
 	conf.ReadAppConfig()
 	conf.ReadGrpcConfig()
 	conf.ReadEtcdConfg()
+	conf.ReadMysqlConfig()
 
 	if err != nil {
 		log.Fatalln("InitConfig: ", err)
