@@ -17,6 +17,7 @@ type Config struct {
 	AppConfig   *AppConfig
 	EtcdConfig  *EtcdConfig
 	MysqlConfig *MysqlConfig
+	JwtConfig   *JwtConfig
 }
 
 type AppConfig struct {
@@ -41,6 +42,13 @@ type MysqlConfig struct {
 
 type EtcdConfig struct {
 	Addrs []string `mapstructure:"addrs"`
+}
+
+type JwtConfig struct {
+	AccessExp     int64
+	RefreshExp    int64
+	AccessSecret  string
+	RefreshSecret string
 }
 
 func (c *Config) ReadGrpcConfig() {
@@ -83,6 +91,16 @@ func (c *Config) ReadMysqlConfig() {
 	c.MysqlConfig = mysqlConfig
 }
 
+func (c *Config) ReadJwtConfig() {
+	jwtConfig := new(JwtConfig)
+	err := c.viper.UnmarshalKey("jwt", jwtConfig)
+	if err != nil {
+		log.Fatalln("jwtconfig read err: ", err)
+	}
+	log.Println("jwt config: ", jwtConfig)
+	c.JwtConfig = jwtConfig
+}
+
 // InitConfig 初始化config
 func InitConfig() *Config {
 	// 配置viper
@@ -100,6 +118,7 @@ func InitConfig() *Config {
 	conf.ReadGrpcConfig()
 	conf.ReadEtcdConfg()
 	conf.ReadMysqlConfig()
+	conf.ReadJwtConfig()
 
 	if err != nil {
 		log.Fatalln("InitConfig: ", err)

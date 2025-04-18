@@ -40,3 +40,9 @@ func (m *MemberDao) GetMemberByMobile(ctx context.Context, mobile string) (bool,
 	err := m.conn.Default(ctx).Model(&member.Member{}).Where("mobile = ?", mobile).Count(&count).Error
 	return count > 0, err
 }
+
+func (m *MemberDao) FindMember(ctx context.Context, account, password string) (*member.Member, error) {
+	mem := new(member.Member)
+	err := m.conn.Default(ctx).Model(&member.Member{}).Where(&member.Member{Account: account, Password: password}).First(mem).Error
+	return mem, err
+}

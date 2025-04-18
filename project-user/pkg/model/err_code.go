@@ -14,4 +14,5 @@ var (
 	MobileExist        = errs.NewError(10102006, "手机号已经存在了")
 	AccountAndPwdError = errs.NewError(10102007, "账号密码不正确")
 	RegisterErr        = errs.NewError(10102007, "注册错误")
+	CopyErr            = errs.NewError(10102008, "copy错误")
 )

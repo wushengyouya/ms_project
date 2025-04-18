@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"time"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/wushengyouya/project-api/pkg/model/user"
 	common "github.com/wushengyouya/project-common"
+	"github.com/wushengyouya/project-common/encrypts"
 	"github.com/wushengyouya/project-common/errs"
 	"github.com/wushengyouya/project-common/logs"
 	"github.com/wushengyouya/project-grpc/user/login"
@@ -41,6 +43,8 @@ func (*LoginHanlder) Register(ctx *gin.Context) {
 	// 1、接收参数
 	var req user.RegisterReq
 	err := ctx.ShouldBind(&req)
+	log.Println(req)
+
 	if err != nil {
 		ctx.JSON(http.StatusOK, result.Fail(http.StatusBadRequest, "参数格式有误"))
 		return
@@ -49,6 +53,7 @@ func (*LoginHanlder) Register(ctx *gin.Context) {
 	// 2、校验参数
 	if err := req.Verify(); err != nil {
 		ctx.JSON(http.StatusOK, result.Fail(http.StatusBadRequest, err.Error()))
+		return
 	}
 	// 3、调用login rpc服务
 	// 加入调用超时
@@ -70,6 +75,41 @@ func (*LoginHanlder) Register(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, result.Success(""))
 
+}
+
+func (*LoginHanlder) Login(ctx *gin.Context) {
+	// 接收用户名和密码
+	result := new(common.Result)
+	var req user.LoginReq
+	err := ctx.ShouldBind(&req)
+	if err != nil {
+		ctx.JSON(http.StatusOK, result.Fail(http.StatusBadRequest, "参数格式有误"))
+		return
+	}
+	loginMsg := new(login.LoginMessage)
+	err = copier.Copy(loginMsg, req)
+	if err != nil {
+		ctx.JSON(http.StatusOK, result.Fail(http.StatusBadRequest, "copy失败"))
+		return
+	}
+
+	// 调用rpc登录
+	c, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	loginMsg.Password = encrypts.Sha256(req.Password)
+	loginResp, err := UserClient.Login(c, loginMsg)
+	if err != nil {
+		code, msg := errs.ParseGrpcError(err)
+		ctx.JSON(http.StatusOK, result.Fail(code, msg))
+		return
+	}
+	resp := new(user.LoginResp)
+	err = copier.Copy(resp, loginResp)
+	if err != nil {
+		ctx.JSON(http.StatusOK, result.Fail(http.StatusBadRequest, "copy失败"))
+		return
+	}
+	ctx.JSON(http.StatusOK, result.Success(resp))
 }
 
 func New() *LoginHanlder {
