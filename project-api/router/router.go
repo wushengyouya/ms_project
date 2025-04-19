@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/wushengyouya/project-api/api/project"
 	"github.com/wushengyouya/project-api/api/user"
 	"google.golang.org/grpc"
 )
@@ -27,6 +28,7 @@ func (RegisterRouter) Route(router Router, r *gin.Engine) {
 func InitRouter(r *gin.Engine) {
 	router := New()
 	router.Route(new(user.RouterLogin), r)
+	router.Route(new(project.RouterProject), r)
 }
 
 type gRPCConfig struct {

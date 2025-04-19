@@ -148,13 +148,18 @@ func (ls *LoginService) Login(ctx context.Context, in *login.LoginMessage) (*log
 	}
 	var orgsMessage []*login.OrganizationMessage
 	err = copier.Copy(&orgsMessage, orgs)
+	// 对org id进行加密
+	for _, v := range orgsMessage {
+		v.Code, _ = encrypts.EncryptInt64(v.Id, model.AESKey)
+	}
 	if err != nil {
 		zap.L().Error("login Copy orgs error", zap.Error(err))
 		return nil, errs.GrpcError(model.CopyErr)
 	}
 	// 生成token, refreshToken
 	memIdStr := strconv.FormatInt(mem.Id, 10)
-
+	// 加密memId
+	memMsg.Code, _ = encrypts.Encrypt(memIdStr, model.AESKey)
 	exp := time.Duration(config.AppConf.JwtConfig.AccessExp * 3600 * 24)
 	rExp := time.Duration(config.AppConf.JwtConfig.RefreshExp * 3600 * 24)
 
