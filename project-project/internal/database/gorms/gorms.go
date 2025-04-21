@@ -46,6 +46,10 @@ func NewTran() *GormConn {
 	return &GormConn{DB: GetDB(), tx: GetDB()}
 }
 
+func (g *GormConn) Seesion(ctx context.Context) *gorm.DB {
+	return g.DB.Session(&gorm.Session{Context: ctx})
+}
+
 // Default 用于基于现有连接 创建一个新的独立会话。新会话会继承原始连接的配置（如数据库类型、连接池设置）
 // 但允许覆盖特定参数。
 // &gorm.Session{Context: ctx}：配置会话参数，将传入的上下文 ctx 注入到新会话中。

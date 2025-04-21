@@ -178,3 +178,11 @@ func (ls *LoginService) Login(ctx context.Context, in *login.LoginMessage) (*log
 		TokenList:        tokenList,
 	}, nil
 }
+
+func (ls *LoginService) TokenVerify(context.Context, *login.LoginMessage) (*login.LoginResponse, error) {
+
+	return nil, nil
+}
+func (ls *LoginService) MyOrgList(context.Context, *login.UserMessage) (*login.OrgListResponse, error) {
+	return nil, nil
+}

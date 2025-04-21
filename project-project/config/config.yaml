@@ -1,5 +1,5 @@
 app:
-  addr: "127.0.0.1:8080"
+  addr: "127.0.0.1:8081"
   name: "project-user"
 zap:
   debugFileName: "..\\logs\\debug\\project-debug.log"
@@ -15,8 +15,8 @@ redis:
   password: 
   db: 0
 grpc:
-  addr: "127.0.0.1:8881"
-  name: "user"
+  addr: "127.0.0.1:8882"
+  name: "project"
   version: "1.0.0"
   weight: 2
 

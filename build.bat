@@ -19,6 +19,7 @@ SET CGO_ENABLED=0
 SET GOOS=windows
 SET GOARCH=amd64
 go build -o project-user/target/project-user.exe project-user/main.go
+go build -o project-project/target/project-project.exe project-project/main.go
 go build -o project-api/target/project-api.exe project-api/main.go
 :build_linux_amd64
 echo 编译Linux版本64位
@@ -26,4 +27,5 @@ SET CGO_ENABLED=0
 SET GOOS=linux
 SET GOARCH=amd64
 go build -o project-user/target/project-user project-user/main.go
+go build -o project-project/target/project-project project-project/main.go
 go build -o project-api/target/project-api project-api/main.go

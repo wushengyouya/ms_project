@@ -27,13 +27,13 @@ message RegisterResponse {
 message LoginMessage {
     string account = 1;
     string password = 2;
-}
-
-message LoginResponse {
+    string token = 3;
+  }
+  message LoginResponse{
     MemberMessage member = 1;
     repeated OrganizationMessage organizationList = 2;
     TokenMessage tokenList = 3;
-}
+  }
 
 message MemberMessage {
     int64 id = 1;
@@ -73,9 +73,19 @@ message TokenMessage {
     string tokenType = 3;
     int64 accessTokenExp = 4;
 }
+
+message UserMessage{
+    int64 memId = 1;
+}
+message OrgListResponse{
+    repeated OrganizationMessage organizationList = 1;
+}
+
 service LoginService {
     rpc GetCaptcha(CaptchaMessage) returns (CaptchaResponse) {}
     rpc Register(RegisterMessage) returns (RegisterResponse) {}
     rpc Login(LoginMessage) returns (LoginResponse){}
+    rpc TokenVerify(LoginMessage) returns (LoginResponse){}
+    rpc MyOrgList(UserMessage) returns (OrgListResponse) {}
 }
 

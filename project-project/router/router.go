@@ -7,9 +7,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/wushengyouya/project-common/discovery"
 	"github.com/wushengyouya/project-common/logs"
-	"github.com/wushengyouya/project-grpc/user/login"
+	"github.com/wushengyouya/project-grpc/project"
 	"github.com/wushengyouya/project-project/config"
-	loginServiceV1 "github.com/wushengyouya/project-user/pkg/service/login.service.v1"
+	projectservicev1 "github.com/wushengyouya/project-project/pkg/service/project.service.v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/resolver"
 )
@@ -45,7 +45,7 @@ func RegisterGrpc() *grpc.Server {
 	c := gRPCConfig{
 		Addr: config.AppConf.GrpcConfig.Addr,
 		RegisterFunc: func(g *grpc.Server) {
-			login.RegisterLoginServiceServer(g, loginServiceV1.New())
+			project.RegisterProjectServiceServer(g, projectservicev1.New())
 		},
 	}
 	s := grpc.NewServer()
