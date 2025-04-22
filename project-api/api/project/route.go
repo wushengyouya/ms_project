@@ -11,8 +11,10 @@ type RouterProject struct {
 func init() {}
 
 func (*RouterProject) Register(r *gin.Engine) {
+	InitProjectRpcClient()
 	h := New()
-	group := r.Group("/project/index")
+	group := r.Group("/project")
 	group.Use(middleware.TokenVerify())
-	group.POST("", h.Index)
+	group.POST("/index", h.Index)
+	group.POST("/selfList", h.MyProjectList)
 }

@@ -15,7 +15,7 @@ func (p *ProjectDao) FindProjectByMemId(ctx context.Context, memId int64, page i
 	var pms []*project.ProjectAndMember
 	session := p.conn.Seesion(ctx)
 	index := (page - 1) * size
-	raw := session.Raw("select * from ms_project a,ms_project_memeber b where a.id = b.project_code and b.member_code = ? limit ?,?", memId, index, size)
+	raw := session.Raw("select * from ms_project a,ms_project_member b where a.id = b.project_code and b.member_code = ? limit ?,?", memId, index, size)
 
 	raw.Scan(&pms)
 	var total int64

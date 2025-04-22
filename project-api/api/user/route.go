@@ -11,4 +11,5 @@ func (rl *RouterLogin) Register(r *gin.Engine) {
 	r.POST("/project/login/getCaptcha", h.GetCaptcha)
 	r.POST("/project/login/register", h.Register)
 	r.POST("/project/login", h.Login)
+	r.POST("/project/organization/_getOrgList", h.MyOrgList)
 }

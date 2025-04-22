@@ -111,7 +111,31 @@ func (*LoginHanlder) Login(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, result.Success(resp))
 }
+func (*LoginHanlder) MyOrgList(ctx *gin.Context) {
+	reuslt := common.Result{}
+	token := ctx.GetHeader("Authorization")
+	// 验证用户是否已经登录
+	mem, err := UserClient.TokenVerify(context.Background(), &login.LoginMessage{Token: token})
+	if err != nil {
+		code, msg := errs.ParseGrpcError(err)
+		ctx.JSON(http.StatusOK, reuslt.Fail(code, msg))
+		return
+	}
+	list, err := UserClient.MyOrgList(context.Background(), &login.UserMessage{MemId: mem.Member.Id})
+	if err != nil {
+		code, msg := errs.ParseGrpcError(err)
+		ctx.JSON(http.StatusOK, reuslt.Fail(code, msg))
+		return
+	}
+	if list.OrganizationList == nil {
+		ctx.JSON(http.StatusOK, reuslt.Success([]*user.OrganizationList{}))
+		return
+	}
 
+	var orgs []*user.OrganizationList
+	copier.Copy(orgs, list.OrganizationList)
+	ctx.JSON(http.StatusOK, reuslt.Success(orgs))
+}
 func New() *LoginHanlder {
 	return new(LoginHanlder)
 }

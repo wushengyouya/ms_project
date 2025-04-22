@@ -15,4 +15,5 @@ var (
 	AccountAndPwdError = errs.NewError(10102007, "账号密码不正确")
 	RegisterErr        = errs.NewError(10102007, "注册错误")
 	CopyErr            = errs.NewError(10102008, "copy错误")
+	NoLogin            = errs.NewError(10102009, "未登录")
 )

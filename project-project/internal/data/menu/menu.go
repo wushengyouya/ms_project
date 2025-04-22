@@ -19,7 +19,7 @@ type ProjectMenu struct {
 	ShowSlider int
 }
 
-func TableName() string {
+func (*ProjectMenu) TableName() string {
 	return "ms_project_menu"
 }
 

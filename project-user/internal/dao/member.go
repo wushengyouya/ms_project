@@ -46,3 +46,9 @@ func (m *MemberDao) FindMember(ctx context.Context, account, password string) (*
 	err := m.conn.Default(ctx).Model(&member.Member{}).Where(&member.Member{Account: account, Password: password}).First(mem).Error
 	return mem, err
 }
+
+func (m *MemberDao) FindMemberById(ctx context.Context, id int64) (*member.Member, error) {
+	mem := new(member.Member)
+	err := m.conn.Default(ctx).Model(&member.Member{}).Where(&member.Member{Id: id}).First(&mem).Error
+	return mem, err
+}

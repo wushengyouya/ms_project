@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/jinzhu/copier"
@@ -160,8 +161,8 @@ func (ls *LoginService) Login(ctx context.Context, in *login.LoginMessage) (*log
 	memIdStr := strconv.FormatInt(mem.Id, 10)
 	// 加密memId
 	memMsg.Code, _ = encrypts.Encrypt(memIdStr, model.AESKey)
-	exp := time.Duration(config.AppConf.JwtConfig.AccessExp * 3600 * 24)
-	rExp := time.Duration(config.AppConf.JwtConfig.RefreshExp * 3600 * 24)
+	exp := time.Duration(config.AppConf.JwtConfig.AccessExp*3600*24) * time.Second
+	rExp := time.Duration(config.AppConf.JwtConfig.RefreshExp*3600*24) * time.Second
 
 	token := jwts.CreateToken(memIdStr, config.AppConf.JwtConfig.AccessSecret, config.AppConf.JwtConfig.RefreshSecret, exp, rExp)
 
@@ -179,10 +180,43 @@ func (ls *LoginService) Login(ctx context.Context, in *login.LoginMessage) (*log
 	}, nil
 }
 
-func (ls *LoginService) TokenVerify(context.Context, *login.LoginMessage) (*login.LoginResponse, error) {
+func (ls *LoginService) TokenVerify(ctx context.Context, in *login.LoginMessage) (*login.LoginResponse, error) {
+	token := in.Token
+	if strings.Contains(token, "bearer") {
+		token = strings.ReplaceAll(token, "bearer ", "")
+	}
 
-	return nil, nil
+	// 解析token信息
+	ParseToken, err := jwts.ParseToken(token, config.AppConf.JwtConfig.AccessSecret)
+	if err != nil {
+		zap.L().Error("Login TokenVerify error", zap.Error(err))
+		return nil, errs.GrpcError(model.NoLogin)
+	}
+	// 数据库查询 登录之后 把用户信息存储起来
+	id, _ := strconv.ParseInt(ParseToken, 10, 64)
+	mem, err := ls.MemberRepo.FindMemberById(context.Background(), id)
+	if err != nil {
+		zap.L().Error("TokenVerify db FindMemberById error", zap.Error(err))
+		return nil, errs.GrpcError(model.DBError)
+	}
+	memberMsg := &login.MemberMessage{}
+	copier.Copy(memberMsg, mem)
+	memberMsg.Code, _ = encrypts.EncryptInt64(memberMsg.Id, model.AESKey)
+
+	// 返回结果
+	return &login.LoginResponse{Member: memberMsg}, nil
 }
-func (ls *LoginService) MyOrgList(context.Context, *login.UserMessage) (*login.OrgListResponse, error) {
-	return nil, nil
+func (ls *LoginService) MyOrgList(ctx context.Context, in *login.UserMessage) (*login.OrgListResponse, error) {
+	memId := in.MemId
+	orgs, err := ls.OrganizationRepo.FindOrganizationByMemId(ctx, memId)
+	if err != nil {
+		zap.L().Error("MyOrgList FindOrganizationByMemId error ", zap.Error(err))
+		return nil, errs.GrpcError(model.DBError)
+	}
+	var orgsMessage []*login.OrganizationMessage
+	copier.Copy(orgsMessage, orgs)
+	for _, org := range orgsMessage {
+		org.Code, _ = encrypts.EncryptInt64(org.Id, model.AESKey)
+	}
+	return &login.OrgListResponse{OrganizationList: orgsMessage}, nil
 }

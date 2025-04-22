@@ -13,4 +13,5 @@ type MemberRepo interface {
 	GetMemberByEmail(ctx context.Context, email string) (bool, error)
 	GetMemberByMobile(ctx context.Context, mobile string) (bool, error)
 	FindMember(ctx context.Context, account, password string) (*member.Member, error)
+	FindMemberById(ctx context.Context, id int64) (mem *member.Member, err error)
 }
