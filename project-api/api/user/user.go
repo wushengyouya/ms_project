@@ -14,6 +14,7 @@ import (
 	"github.com/wushengyouya/project-common/errs"
 	"github.com/wushengyouya/project-common/logs"
 	"github.com/wushengyouya/project-grpc/user/login"
+	"go.uber.org/zap"
 )
 
 type LoginHanlder struct {
@@ -60,7 +61,7 @@ func (*LoginHanlder) Register(ctx *gin.Context) {
 	c, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 	msg := &login.RegisterMessage{}
-	err = copier.Copy(msg, req)
+	err = copier.Copy(&msg, req)
 	if err != nil {
 		ctx.JSON(http.StatusOK, result.Fail(http.StatusBadRequest, "copy有误"))
 		return
@@ -87,7 +88,7 @@ func (*LoginHanlder) Login(ctx *gin.Context) {
 		return
 	}
 	loginMsg := new(login.LoginMessage)
-	err = copier.Copy(loginMsg, req)
+	err = copier.Copy(&loginMsg, req)
 	if err != nil {
 		ctx.JSON(http.StatusOK, result.Fail(http.StatusBadRequest, "copy失败"))
 		return
@@ -104,7 +105,7 @@ func (*LoginHanlder) Login(ctx *gin.Context) {
 		return
 	}
 	resp := new(user.LoginResp)
-	err = copier.Copy(resp, loginResp)
+	err = copier.Copy(&resp, loginResp)
 	if err != nil {
 		ctx.JSON(http.StatusOK, result.Fail(http.StatusBadRequest, "copy失败"))
 		return
@@ -115,13 +116,16 @@ func (*LoginHanlder) MyOrgList(ctx *gin.Context) {
 	reuslt := common.Result{}
 	token := ctx.GetHeader("Authorization")
 	// 验证用户是否已经登录
+
 	mem, err := UserClient.TokenVerify(context.Background(), &login.LoginMessage{Token: token})
 	if err != nil {
 		code, msg := errs.ParseGrpcError(err)
 		ctx.JSON(http.StatusOK, reuslt.Fail(code, msg))
 		return
 	}
-	list, err := UserClient.MyOrgList(context.Background(), &login.UserMessage{MemId: mem.Member.Id})
+	c, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	list, err := UserClient.MyOrgList(c, &login.UserMessage{MemId: mem.Member.Id})
 	if err != nil {
 		code, msg := errs.ParseGrpcError(err)
 		ctx.JSON(http.StatusOK, reuslt.Fail(code, msg))
@@ -133,7 +137,12 @@ func (*LoginHanlder) MyOrgList(ctx *gin.Context) {
 	}
 
 	var orgs []*user.OrganizationList
-	copier.Copy(orgs, list.OrganizationList)
+	err = copier.Copy(&orgs, list.OrganizationList)
+	if err != nil {
+		zap.L().Error("MyOrgList copy err", zap.Error(err))
+		ctx.JSON(http.StatusOK, reuslt.Fail(http.StatusBadRequest, "copy有误"))
+		return
+	}
 	ctx.JSON(http.StatusOK, reuslt.Success(orgs))
 }
 func New() *LoginHanlder {

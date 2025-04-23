@@ -137,7 +137,7 @@ func (ls *LoginService) Login(ctx context.Context, in *login.LoginMessage) (*log
 	}
 	// 查询用户下的组织
 	memMsg := new(login.MemberMessage)
-	err = copier.Copy(memMsg, mem)
+	err = copier.Copy(&memMsg, mem)
 	if err != nil {
 		zap.L().Error("login Copy mem error", zap.Error(err))
 		return nil, errs.GrpcError(model.CopyErr)
@@ -200,7 +200,11 @@ func (ls *LoginService) TokenVerify(ctx context.Context, in *login.LoginMessage)
 		return nil, errs.GrpcError(model.DBError)
 	}
 	memberMsg := &login.MemberMessage{}
-	copier.Copy(memberMsg, mem)
+	err = copier.Copy(&memberMsg, mem)
+	if err != nil {
+		zap.L().Error("MyOrgList copy err", zap.Error(err))
+		return nil, errs.GrpcError(model.CopyErr)
+	}
 	memberMsg.Code, _ = encrypts.EncryptInt64(memberMsg.Id, model.AESKey)
 
 	// 返回结果
@@ -214,7 +218,11 @@ func (ls *LoginService) MyOrgList(ctx context.Context, in *login.UserMessage) (*
 		return nil, errs.GrpcError(model.DBError)
 	}
 	var orgsMessage []*login.OrganizationMessage
-	copier.Copy(orgsMessage, orgs)
+	err = copier.Copy(&orgsMessage, orgs)
+	if err != nil {
+		zap.L().Error("MyOrgList copy err", zap.Error(err))
+		return nil, errs.GrpcError(model.CopyErr)
+	}
 	for _, org := range orgsMessage {
 		org.Code, _ = encrypts.EncryptInt64(org.Id, model.AESKey)
 	}
