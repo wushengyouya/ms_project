@@ -14,12 +14,13 @@ services:
       - ${MYSQL_DIR}/data:/var/lib/mysql
       - ${MYSQL_DIR}/conf:/etc/mysql/conf.d/
       - ${MYSQL_DIR}/logs:/logs
-    command:
-      --default-authentication-plugin=mysql_native_password
-      --character-set-server=utf8mb4
-      --collation-server=utf8mb4_general_ci
-      --explicit_defaults_for_timestamp=true
-      --lower_case_table_names=1
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci --explicit_defaults_for_timestamp=true --lower_case_table_names=1
+    networks:
+      - my-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 3s # 超时3秒
   Redis:
     container_name: redis6
     image: redis:${REDIS_VERSION}
@@ -30,6 +31,13 @@ services:
     ports:
       - ${REDIS_PORT}:6379
     command: redis-server /etc/redis/redis.conf
+    networks:
+      - my-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ] # 发送 PING 命令
+      interval: 10s # 每5秒检查一次
+      timeout: 3s # 超时3秒
+      retries: 5 # 最多重试5次
   Etcd:
     container_name: etcd3
     image: bitnami/etcd:${ETCD_VERSION}
@@ -45,9 +53,134 @@ services:
     ports:
       - ${ETCD_PORT}:2379
       - 2380:2380
-  Project-User:
-    container_name: project-user
+    networks:
+      - my-network
+    healthcheck:
+      test: [ "CMD", "etcdctl", "endpoint", "health" ] # 检查端点健康状态
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  Project-User-1:
+    container_name: project-user-1
     image: project-user:latest
     ports:
       - 8080:8080
       - 8881:8881
+    networks:
+      - my-network
+    depends_on:
+      mysql:
+        condition: service_healthy # 等待依赖服务健康
+      Etcd:
+        condition: service_healthy
+      Redis:
+        condition: service_healthy
+  Project-User-2:
+    container_name: project-user-2
+    image: project-user-2:latest
+    networks:
+      - my-network
+    depends_on:
+      mysql:
+        condition: service_healthy # 等待依赖服务健康
+      Etcd:
+        condition: service_healthy
+      Redis:
+        condition: service_healthy
+
+  Project-project-1:
+    container_name: project-project-1
+    image: project-project:latest
+    ports:
+      - 8081:8081
+      - 8882:8882
+    networks:
+      - my-network
+    depends_on:
+      mysql:
+        condition: service_healthy # 等待依赖服务健康
+      Etcd:
+        condition: service_healthy
+      Redis:
+        condition: service_healthy
+  Project-project-2:
+    container_name: project-project-2
+    image: project-project-2:latest
+    networks:
+      - my-network
+    depends_on:
+      mysql:
+        condition: service_healthy # 等待依赖服务健康
+      Etcd:
+        condition: service_healthy
+      Redis:
+        condition: service_healthy
+  Project-api-1:
+    container_name: project-api-1
+    image: project-api:latest
+    ports:
+      - 8111:80
+    networks:
+      - my-network
+    # healthcheck: 健康检查部分在Dockerfile
+    #   test: [ "CMD", "curl", "-f", "http://localhost/ping" ]
+    #   interval: 10s
+    #   timeout: 30s
+    #   retries: 5
+    #   start_period: 30s
+    depends_on:
+      mysql:
+        condition: service_healthy # 等待依赖服务健康
+      Etcd:
+        condition: service_healthy
+      Redis:
+        condition: service_healthy
+      Project-User-1:
+        condition: service_healthy
+      Project-User-2:
+        condition: service_healthy
+      Project-project-1:
+        condition: service_healthy
+      Project-project-2:
+        condition: service_healthy
+
+  Project-api-2:
+    container_name: project-api-2
+    image: project-api:latest
+    networks:
+      - my-network
+    depends_on:
+      mysql:
+        condition: service_healthy # 等待依赖服务健康
+      Etcd:
+        condition: service_healthy
+      Redis:
+        condition: service_healthy
+      Project-User-1:
+        condition: service_healthy
+      Project-User-2:
+        condition: service_healthy
+      Project-project-1:
+        condition: service_healthy
+      Project-project-2:
+        condition: service_healthy
+  nginx:
+    container_name: nginx8
+    image: nginx:stable-alpine-perl
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - my-network
+    volumes:
+      - ${NGINX_DIR}/nginx.conf:/etc/nginx/nginx.conf
+      - ${SSL_DIR}:/etc/ssl/certs
+    depends_on:
+      Project-api-1:
+        condition: service_healthy
+      Project-api-2:
+        condition: service_healthy
+networks:
+  my-network:
+    driver: bridge

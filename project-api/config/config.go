@@ -30,7 +30,7 @@ func (c *Config) ReadAppConfig() {
 	app := new(AppConfig)
 	err := c.viper.UnmarshalKey("app", app)
 	if err != nil {
-		zap.L().Error("app config read err: ", zap.Error(err))
+		zap.L().Error("config read err: ", zap.Error(err))
 	}
 	c.AppConfig = app
 }
@@ -40,10 +40,10 @@ func InitConfig() *Config {
 	viper := viper.New()
 	conf := &Config{viper: viper}
 	workDir, _ := os.Getwd()
-	conf.viper.SetConfigName("app")
+	conf.viper.SetConfigName("config")
 	conf.viper.SetConfigType("yaml")
-	conf.viper.AddConfigPath(workDir + "\\config")
-	log.Println(workDir + "\\config")
+	conf.viper.AddConfigPath(workDir + "/config")
+	log.Println(workDir + "/config")
 	err := conf.viper.ReadInConfig()
 	conf.ReadEtcdConfg()
 	conf.ReadAppConfig()

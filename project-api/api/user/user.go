@@ -145,6 +145,13 @@ func (*LoginHanlder) MyOrgList(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, reuslt.Success(orgs))
 }
+
+func (*LoginHanlder) HealthCheck(ctx *gin.Context) {
+	zap.L().Info("heath_check")
+	ctx.JSON(http.StatusOK, gin.H{
+		"health": "ok",
+	})
+}
 func New() *LoginHanlder {
 	return new(LoginHanlder)
 }

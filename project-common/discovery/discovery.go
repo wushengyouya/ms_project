@@ -92,7 +92,7 @@ func (r *Register) register() error {
 	}
 	// 将服务器ip数据put进入etcd
 	_, err = r.cli.Put(context.Background(), BuildRegPath(r.srvInfo), string(data), clientv3.WithLease(r.leasesID))
-	return err
+	return err	
 }
 
 // unregister 删除节点

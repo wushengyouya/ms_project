@@ -1,6 +1,6 @@
 app:
   addr: "127.0.0.1:8081"
-  name: "project-user"
+  name: "project-project"
 zap:
   debugFileName: "..\\logs\\debug\\project-debug.log"
   infoFileName: "..\\logs\\info\\project-info.log"

@@ -36,7 +36,7 @@ func CovertChild(pms []*ProjectMenu) []*ProjectMenuChild {
 	for _, v := range pmcs {
 		if v.Pid == 0 {
 			pmc := &ProjectMenuChild{}
-			copier.Copy(pmc, v)
+			copier.Copy(&pmc, v)
 			childPmcs = append(childPmcs, pmc)
 		}
 	}
@@ -49,7 +49,7 @@ func toChild(childPmcs []*ProjectMenuChild, pmcs []*ProjectMenuChild) {
 		for _, pm := range pmcs {
 			if pmc.Id == pm.Pid {
 				child := &ProjectMenuChild{}
-				copier.Copy(child, pm)
+				copier.Copy(&child, pm)
 				pmc.Children = append(pmc.Children, child)
 			}
 		}

@@ -1,0 +1,35 @@
+app:
+  addr: "0.0.0.0:8081"
+  name: "project-project"
+zap:
+  debugFileName: "/logs/debug/project-debug.log"
+  infoFileName: "/logs/info/project-info.log"
+  warnFileName: "/logs/error/project-warn.log"
+  errorFileName: "/logs/error/project-error.log"
+  maxSize: 500
+  maxAge: 28
+  MaxBackups: 3
+redis:
+  host: "redis6"
+  port: 6379
+  password: ""
+  db: 0
+grpc:
+  addr: "project-project-2:8882"
+  name: "project"
+  version: "1.0.0"
+  weight: 2
+etcd:
+  addrs:
+    - "etcd3:2379" # docker 用一个网络下可以使用容器名访问
+mysql:
+  username: root
+  password: root
+  host: mysql8
+  port: 3306
+  db: msproject
+jwt:
+  accessExp: 7
+  refreshExp: 14
+  accessSecret: msproject
+  refreshSecret: ms_project

@@ -3,6 +3,7 @@ package router
 import (
 	"log"
 	"net"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/wushengyouya/project-common/discovery"
@@ -10,6 +11,7 @@ import (
 	"github.com/wushengyouya/project-grpc/user/login"
 	"github.com/wushengyouya/project-user/config"
 	loginServiceV1 "github.com/wushengyouya/project-user/pkg/service/login.service.v1"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/resolver"
 )
@@ -33,7 +35,12 @@ func (RegisterRouter) Route(router Router, r *gin.Engine) {
 }
 
 func InitRouter(r *gin.Engine) {
-
+	r.GET("/ping", func(ctx *gin.Context) {
+		zap.L().Info("heath_check")
+		ctx.JSON(http.StatusOK, gin.H{
+			"health": "ok",
+		})
+	})
 }
 
 type gRPCConfig struct {
