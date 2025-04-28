@@ -191,3 +191,7 @@ services:
 networks:
   my-network:
     driver: bridge
+    ipam:
+      # 避免与默认网路冲突
+      config:
+        - subnet: 172.16.0.0/16
